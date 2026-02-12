@@ -1,0 +1,156 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Since your palette is a Dark Mode palette (Neon on Black), 
+   we apply these colors to the :root to be the default look.
+*/
+:root {
+  --radius: 0.625rem;
+
+  /* Main Background: Deep Navy Black */
+  --background: #0B0B0E;
+  /* Main Text: Soft White */
+  --foreground: #E0E0E0;
+
+  /* Card Background: Deep Abyss (Slight contrast from BG) */
+  --card: #0A0F1F;
+  --card-foreground: #E0E0E0;
+
+  --popover: #0B0B0E;
+  --popover-foreground: #E0E0E0;
+
+  /* Primary: Neon Cyan */
+  --primary: #00F3FF;
+  --primary-foreground: #000000; /* Black text on neon for readability */
+
+  /* Secondary: Matrix Green */
+  --secondary: #00FF41;
+  --secondary-foreground: #000000;
+
+  /* Accent: Electric Purple */
+  --accent: #BC00FF;
+  --accent-foreground: #FFFFFF;
+
+  /* Muted: A slightly lighter navy for disabled/subtle states */
+  --muted: #16203D;
+  --muted-foreground: #94A3B8;
+
+  /* Destructive: Keep standard red, or use a Neon Red */
+  --destructive: #ef4444;
+  --destructive-foreground: #FFFFFF;
+
+  /* Borders: Low opacity purple or cyan blend */
+  --border: #1F294F; 
+  --input: #1F294F;
+  
+  /* Ring: Neon Cyan */
+  --ring: #00F3FF;
+
+  /* Charts: Mapped to your palette */
+  --chart-1: #00F3FF; /* Cyan */
+  --chart-2: #BC00FF; /* Purple */
+  --chart-3: #00FF41; /* Green */
+  --chart-4: #E0E0E0; /* White */
+  --chart-5: #16203D; /* Muted Blue */
+
+  /* Sidebar */
+  --sidebar: #0B0B0E;
+  --sidebar-foreground: #E0E0E0;
+  --sidebar-primary: #00F3FF;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #16203D;
+  --sidebar-accent-foreground: #E0E0E0;
+  --sidebar-border: #1F294F;
+  --sidebar-ring: #00F3FF;
+}
+
+/* We keep the .dark class identical to :root 
+   so the theme stays consistent if user toggles modes.
+*/
+.dark {
+  --background: #0A0F1F;
+  --foreground: #E0E0E0;
+  --card: #0B0B0E;
+  --card-foreground: #E0E0E0;
+  --popover: #0B0B0E;
+  --popover-foreground: #E0E0E0;
+  --primary: #00F3FF;
+  --primary-foreground: #000000;
+  --secondary: #00FF41;
+  --secondary-foreground: #000000;
+  --muted: #16203D;
+  --muted-foreground: #94A3B8;
+  --accent: #BC00FF;
+  --accent-foreground: #FFFFFF;
+  --destructive: #ef4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #1F294F;
+  --input: #1F294F;
+  --ring: #00F3FF;
+  --chart-1: #00F3FF;
+  --chart-2: #BC00FF;
+  --chart-3: #00FF41;
+  --chart-4: #E0E0E0;
+  --chart-5: #16203D;
+  --sidebar: #0B0B0E;
+  --sidebar-foreground: #E0E0E0;
+  --sidebar-primary: #00F3FF;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #16203D;
+  --sidebar-accent-foreground: #E0E0E0;
+  --sidebar-border: #1F294F;
+  --sidebar-ring: #00F3FF;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
