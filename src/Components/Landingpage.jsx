@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import TextType from './Animations/TextType'
 import PixelBlast from './Animations/PixelBlast';
 import FuzzyText from './Animations/FuzzyText';
 import { Typography } from '@mui/material'
 import PolicyOutlinedIcon from '@mui/icons-material/PolicyOutlined';
+import SensorOccupiedOutlinedIcon from '@mui/icons-material/SensorOccupiedOutlined';
 import '../Styles/Landingpage.css'
 import { LiveClock } from './Animations/LiveClock';
+import Profile from './Profile';
+
 
 const Landingpage = () => {
   const texts = [
@@ -15,15 +18,34 @@ const Landingpage = () => {
     "Access granted."
   ];
 
-  const typingSpeed = 75;
-  const pauseDuration = 1500;
+  const typingSpeed = 35;
+  const pauseDuration = 200;
 
+  const [hasStarted, setHasStarted] = useState(false);
   const [visibleLines, setVisibleLines] = useState([0]);
   const [showDetails, setShowDetails] = useState(false);
   const [showTerminal, setShowTerminal] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
 
+  const typingSoundRef = useRef(null);
+  const glitchSoundRef = useRef(null);
+
+  const startExperience = () => {
+    setHasStarted(true);
+  };
+
   useEffect(() => {
+    if (!hasStarted) return;
+
+    typingSoundRef.current = new Audio('/sounds/typing.mp3');
+    typingSoundRef.current.volume = 0.3;
+    typingSoundRef.current.loop = true;
+
+    glitchSoundRef.current = new Audio('/sounds/glitch.mp3');
+    glitchSoundRef.current.volume = 0.5;
+
+    typingSoundRef.current.play().catch(e => console.log('Audio play failed:', e));
+
     texts.forEach((text, index) => {
       if (index === 0) return;
 
@@ -41,15 +63,97 @@ const Landingpage = () => {
     }, 0);
 
     setTimeout(() => {
+      if (typingSoundRef.current) {
+        typingSoundRef.current.pause();
+        typingSoundRef.current.currentTime = 0;
+      }
+
       setShowTerminal(false);
       setShowWelcome(true);
-    }, totalAnimationTime + 500);
+
+      if (glitchSoundRef.current) {
+        glitchSoundRef.current.play().catch(e => console.log('Audio play failed:', e));
+      }
+    }, totalAnimationTime + 300);
 
     setTimeout(() => {
+      if (glitchSoundRef.current) {
+        glitchSoundRef.current.pause();
+        glitchSoundRef.current.currentTime = 0;
+      }
       setShowWelcome(false);
       setShowDetails(true);
-    }, totalAnimationTime + 2500);
-  }, []);
+    }, totalAnimationTime + 1300);
+
+    return () => {
+      if (typingSoundRef.current) {
+        typingSoundRef.current.pause();
+        typingSoundRef.current = null;
+      }
+      if (glitchSoundRef.current) {
+        glitchSoundRef.current.pause();
+        glitchSoundRef.current = null;
+      }
+    };
+  }, [hasStarted]);
+
+  // Get color based on line type
+  const getLineColor = (index) => {
+    if (index === 0) return '#00D4FF'; // Cyan for scanning
+    if (index === 1) return '#FFA500'; // Orange for checking
+    if (index === 2) return '#00FF41'; // Green for low risk
+    if (index === 3) return '#00BFFF'; // Blue for access granted
+    return '#FFFFFF';
+  };
+
+  const getLinePrefix = (index) => {
+    if (index === 0) return '🔍';
+    if (index === 1) return '⚠️';
+    if (index === 2) return '✓';
+    if (index === 3) return '✅';
+    return '>';
+  };
+
+  if (!hasStarted) {
+    return (
+      <div className='min-h-screen bg-black flex items-center justify-center'>
+        <div className='text-center max-w-md'>
+          <PolicyOutlinedIcon
+            style={{ fontSize: 100 }}
+            className='text-cyan-400 mb-6 animate-pulse'
+          />
+          <Typography
+            variant='h3'
+            className='font-mono text-cyan-400 mb-8 font-bold'
+            style={{ textShadow: '0 0 10px rgba(0, 212, 255, 0.5)' }}
+          >
+            SYSTEM PORTAL
+          </Typography>
+
+          <div className='border-2 border-purple-500 p-6 mb-6 mt-4  bg-purple-950/30'>
+            <Typography className='text-purple-300 font-mono text-sm mb-6'>
+              HUMAN VERIFICATION REQUIRED
+            </Typography>
+            <button
+              onClick={startExperience}
+              className='w-full px-6 py-3 bg-transparent border-2 mt-4 border-purple-400 text-purple-300 font-mono text-lg font-bold hover:bg-purple-500 hover:text-white transition-all duration-300 cursor-pointer flex items-center justify-center gap-3'
+              style={{
+                textShadow: '0 0 10px rgba(168, 85, 247, 0.5)',
+                boxShadow: '0 0 20px rgba(168, 85, 247, 0.3)'
+              }}
+            >
+              <SensorOccupiedOutlinedIcon style={{ fontSize: 24 }} />
+              <span>I'm not a robot</span>
+            </button>
+          </div>
+
+          <div className='text-cyan-600 text-xs font-mono opacity-75'>
+            Click to verify identity and initialize system
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -59,7 +163,7 @@ const Landingpage = () => {
             <PixelBlast
               variant="square"
               pixelSize={3}
-              color="#00FF41"
+              color="#00D4FF"
               patternScale={2}
               patternDensity={1.2}
               liquid={true}
@@ -81,27 +185,27 @@ const Landingpage = () => {
               <div className='animate-spin-slow'>
                 <PolicyOutlinedIcon
                   style={{ fontSize: 70 }}
-                  className='text-green-400 drop-shadow-[0_0_15px_rgba(0,255,65,0.5)]'
+                  className='text-cyan-400 drop-shadow-[0_0_15px_rgba(0,212,255,0.5)]'
                 />
               </div>
               <div>
                 <Typography
                   variant='h2'
-                  className='font-mono text-green-400 text-4xl font-bold tracking-wider'
+                  className='font-mono text-cyan-400 text-4xl font-bold tracking-wider'
                   style={{
-                    textShadow: '0 0 10px rgba(0, 255, 65, 0.5)',
+                    textShadow: '0 0 10px rgba(0, 212, 255, 0.5)',
                     letterSpacing: '0.1em'
                   }}
                 >
-                  [ SECURITY CLEARANCE REQUIRED ]
+                  [ SECURITY CLEARANCE PROTOCOL ]
                 </Typography>
-                <div className='text-green-500 text-sm font-mono mt-1 opacity-75'>
+                <div className='text-cyan-500 text-sm font-mono mt-1 opacity-75'>
                   System Access Control v3.7.3
                 </div>
               </div>
             </div>
 
-            <div className='font-mono text-green-300 space-y-3 max-w-3xl'>
+            <div className='font-mono space-y-3 max-w-3xl'>
               {texts.map((text, index) => (
                 visibleLines.includes(index) && (
                   <div
@@ -109,11 +213,13 @@ const Landingpage = () => {
                     className='flex items-start gap-3 animate-slide-in-left'
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <span className='text-green-500 text-xl select-none'>&gt;</span>
+                    <span className='text-xl select-none' style={{ color: getLineColor(index) }}>
+                      {getLinePrefix(index)}
+                    </span>
                     <div className='flex-1'>
                       <TextType
                         text={[text]}
-                        typingSpeed={50}
+                        typingSpeed={30}
                         pauseDuration={pauseDuration}
                         showCursor
                         cursorCharacter="▊"
@@ -123,9 +229,9 @@ const Landingpage = () => {
                         stopCursor={visibleLines.includes(index + 1)}
                         className='text-xl'
                         style={{
-                          textShadow: '0 0 5px rgba(0, 255, 65, 0.3)',
-                          color: index === 2 ? '#00FF41' : '#00D936',
-                          fontWeight: index === 2 ? 'bold' : 'normal',
+                          textShadow: `0 0 5px ${getLineColor(index)}50`,
+                          color: getLineColor(index),
+                          fontWeight: index === 2 || index === 3 ? 'bold' : 'normal',
                           fontSize: index === 3 ? '1.5rem' : '1.25rem'
                         }}
                       />
@@ -135,12 +241,12 @@ const Landingpage = () => {
               ))}
             </div>
 
-            <div className='absolute bottom-8 left-12 right-12 border-t border-green-800 pt-4'>
-              <div className='flex justify-between items-center font-mono text-xs text-green-600'>
+            <div className='absolute bottom-8 left-12 right-12 border-t border-cyan-800 pt-4'>
+              <div className='flex justify-between items-center font-mono text-xs text-cyan-600'>
                 <div className='flex gap-6'>
-                  <span>◉ CONNECTED</span>
-                  <span>▣ PORT: 8811</span>
-                  <span>⚡ SECURE</span>
+                  <span className='text-green-400'>◉ CONNECTED</span>
+                  <span className='text-blue-400'>▣ PORT: 8811</span>
+                  <span className='text-purple-400'>⚡ SECURE</span>
                 </div>
                 <LiveClock />
               </div>
@@ -154,7 +260,7 @@ const Landingpage = () => {
           <FuzzyText
             fontSize="6rem"
             fontWeight={700}
-            color="#00FF41"
+            color="#00BFFF"
             baseIntensity={0.3}
             fuzzRange={40}
             className="font-mono"
@@ -169,53 +275,7 @@ const Landingpage = () => {
       )}
 
       {showDetails && (
-        <div className='min-h-screen bg-black text-green-400 font-mono p-8 animate-fade-in'>
-          <div className='border-2 border-green-400 p-6 mb-8'>
-            <div className='text-green-500 mb-2'>[SYSTEM ACCESS GRANTED]</div>
-            <Typography variant='h2' className='font-bold text-5xl text-green-400 mb-2 font-mono'>
-              &gt; GNANENDRA BOLLAM
-            </Typography>
-            <Typography variant='h5' className='text-xl text-green-300 font-mono'>
-              [CYBERSECURITY ENGINEER | FULL STACK DEVELOPER]
-            </Typography>
-          </div>
-
-          <div className='space-y-6'>
-            <div>
-              <div className='text-green-500 mb-2'>&gt; whoami</div>
-              <p className='text-green-300 pl-4 text-lg'>
-                Cybersecurity enthusiast and full-stack developer specializing in secure application development
-                and penetration testing. Building robust systems with security-first approach.
-              </p>
-            </div>
-
-            <div>
-              <div className='text-green-500 mb-2'>&gt; ls ./skills</div>
-              <div className='pl-4 grid grid-cols-2 gap-2 text-green-300'>
-                <div>→ Web Security</div>
-                <div>→ React / Node.js</div>
-                <div>→ Penetration Testing</div>
-                <div>→ Cloud Security</div>
-                <div>→ Python / JavaScript</div>
-                <div>→ DevSecOps</div>
-              </div>
-            </div>
-
-            <div>
-              <div className='text-green-500 mb-2'>&gt; cat ./contact.txt</div>
-              <div className='pl-4 text-green-300'>
-                <div>📧 Email: your.email@example.com</div>
-                <div>💼 LinkedIn: linkedin.com/in/yourprofile</div>
-                <div>🐱 GitHub: github.com/yourhandle</div>
-              </div>
-            </div>
-
-            <div className='flex items-center'>
-              <span className='text-green-500'>&gt; </span>
-              <span className='animate-pulse ml-2'>_</span>
-            </div>
-          </div>
-        </div>
+        <Profile />
       )}
     </>
   )
