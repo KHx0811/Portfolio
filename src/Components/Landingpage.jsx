@@ -8,6 +8,7 @@ import SensorOccupiedOutlinedIcon from '@mui/icons-material/SensorOccupiedOutlin
 import '../Styles/Landingpage.css'
 import { LiveClock } from './Animations/LiveClock';
 import Profile from './Profile';
+import SystemAlert from './Animations/SystemAlert';
 
 
 const Landingpage = () => {
@@ -116,6 +117,10 @@ const Landingpage = () => {
 
   if (!hasStarted) {
     return (
+      <>
+      <div>
+      <SystemAlert />
+      </div>
       <div className='min-h-screen bg-black flex items-center justify-center'>
         <div className='text-center max-w-md'>
           <PolicyOutlinedIcon
@@ -152,6 +157,7 @@ const Landingpage = () => {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
